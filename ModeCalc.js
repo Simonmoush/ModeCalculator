@@ -32,19 +32,41 @@ var height = 3.5
 var speed_of_sound = 340.29 // meters per sec
 var shroeder_freq = 3*speed_of_sound/Math.min(length, width, height)
 var mode_freq = 0
+var length_freq = 0
+var width_freq = 0
+var height_freq = 0
 
 var mode_list = [];
 
-for(var p = 0; mode_freq > shroeder_freq; p++){
-	for(var q = 0; mode_freq > shroeder_freq; q++){
-		for(var r = 0; mode_freq > shroeder_freq; r++){
+
+
+//TODO fix this shit
+
+var p = 0
+while(length_freq < shroeder_freq){
+	length_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2))
+
+	var q = 0
+	while(width_freq < shroeder_freq){
+		width_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2))
+
+		var r = 0
+		while(height_freq < shroeder_freq){
+			height_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2) + Math.pow(r/height, 2))
+		}
+	}
+}
+
+
+for(var p = 0; length_freq < shroeder_freq; p++){
+	for(var q = 0; width_freq < shroeder_freq; q++){
+		for(var r = 0; height_freq < shroeder_freq; r++){
 			mode_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2) + Math.pow(r/height, 2))
 			if(mode_freq < shroeder_freq && mode_freq != 0){
 				// add to appropriate bin
 				mode_list.push(new Mode(mode_freq, p, q, r))
 			}
 		}
-		mode_freq = 0
 	}
 }
 
