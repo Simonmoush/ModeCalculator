@@ -38,11 +38,6 @@ var height_freq = 0
 
 var mode_list = [];
 
-
-
-//TODO fix this shit
-
-
 console.log("shroeder frequency: " + shroeder_freq)
 
 var p = 0
@@ -55,6 +50,7 @@ while(true){
 		while(true){
 			// calculate the mode frequency for the current p, q, and r
 			mode_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2) + Math.pow(r/height, 2))
+			console.log("["+p+", "+q+", "+r+"]")
 
 
 			// add mode to list of modes
@@ -85,10 +81,29 @@ while(true){
 	}
 }
 
+var sorted_modes = mode_list.sort(compareFreq)
 
-console.log(mode_list)
-for (var m in mode_list){
-	console.log(m.freq + ", " + m.type + ", " + m.axis)
+sorted_modes = sorted_modes.filter(isOblique)
+
+for (var m = 0; m < sorted_modes.length; m++){
+	current_mode = sorted_modes[m]
+	console.log(current_mode.freq + ", " + current_mode.type + ", " + current_mode.axis)
+}
+
+function compareFreq(a, b){
+	if(a.freq < b.freq){ return -1 }
+	if(a.freq > b.freq){ return 1 }
+	return 0
+}
+
+function isAxial(mode){
+	return mode.type == "Axial"
+}
+function isTangential(mode){
+	return mode.type == "Tangential"
+}
+function isOblique(mode){
+	return mode.type == "Oblique"
 }
 
 function Mode(freq, p, q, r){
