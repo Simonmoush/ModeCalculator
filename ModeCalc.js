@@ -42,35 +42,54 @@ var mode_list = [];
 
 //TODO fix this shit
 
+
+console.log("shroeder frequency: " + shroeder_freq)
+
 var p = 0
-while(length_freq < shroeder_freq){
-	length_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2))
+while(true){
 
 	var q = 0
-	while(width_freq < shroeder_freq){
-		width_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2))
+	while(true){
 
 		var r = 0
-		while(height_freq < shroeder_freq){
-			height_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2) + Math.pow(r/height, 2))
-		}
-	}
-}
-
-
-for(var p = 0; length_freq < shroeder_freq; p++){
-	for(var q = 0; width_freq < shroeder_freq; q++){
-		for(var r = 0; height_freq < shroeder_freq; r++){
+		while(true){
+			// calculate the mode frequency for the current p, q, and r
 			mode_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2) + Math.pow(r/height, 2))
-			if(mode_freq < shroeder_freq && mode_freq != 0){
-				// add to appropriate bin
-				mode_list.push(new Mode(mode_freq, p, q, r))
+
+
+			// add mode to list of modes
+			if(mode_freq < shroeder_freq){
+				if(mode_freq != 0){
+					mode_list.push(new Mode(mode_freq, p, q, r))
+				}
+				r++ // check the next mode
+			} else{
+				// higher r for the current p and q will produce modes above the shroeder frequency
+				// so we need to move to the next q
+				break
 			}
 		}
+		if(r == 0) {
+			// if no modes were found, then  higher q for any p and r will produce modes above the shroeder frequency
+			// so wee need to move to the next p
+			p++
+			break
+		}else{
+			q++ // otherwise just move to the next q
+		}
+	}
+	if(q == 0 && r == 0){
+		// if no modes were found, then higher p for any q and r will produce modes above the shroeder frequency
+		// so we're done
+		break
 	}
 }
 
+
 console.log(mode_list)
+for (var m in mode_list){
+	console.log(m.freq + ", " + m.type + ", " + m.axis)
+}
 
 function Mode(freq, p, q, r){
 	// set frequency
