@@ -23,27 +23,58 @@
 	d = the smallest representive dimension of the room
 */
 
+
+
+//TODO fix the data here to take imperial units too
 var length = 5
 var width = 4
 var height = 3.5
 var speed_of_sound = 340.29 // meters per sec
-var shroeder_freq = 3*speed_of_sound/math.min(length, width, height)
+var shroeder_freq = 3*speed_of_sound/Math.min(length, width, height)
 var mode_freq = 0
 
-var modes = {
-	axial: []
-	tangential: []
-	oblique: []
-};
+var mode_list = [];
 
-
-for(int p = 0; mode_freq > shroeder_freq; p++){
-	for(int q = 0; mode_freq > shroeder_freq; q++){
-		for(int r = 0; mode_freq > shroeder_freq; r++){
-			mode_freq = (speed_of_sound/2) * math.sqrt((p/length)^2 + (q/width)^2 + (r/height)^2)
-			if(mode_freq < shroeder_freq){
+for(var p = 0; mode_freq > shroeder_freq; p++){
+	for(var q = 0; mode_freq > shroeder_freq; q++){
+		for(var r = 0; mode_freq > shroeder_freq; r++){
+			mode_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2) + Math.pow(r/height, 2))
+			if(mode_freq < shroeder_freq && mode_freq != 0){
 				// add to appropriate bin
+				mode_list.push(new Mode(mode_freq, p, q, r))
 			}
 		}
+		mode_freq = 0
+	}
+}
+
+console.log(mode_list)
+
+function Mode(freq, p, q, r){
+	// set frequency
+	this.freq = freq
+
+	// determine type and axis
+	if(p == 0 && q == 0){ // axial r
+		this.type = "Axial"
+		this.axis = "Height"
+	}else if(p == 0 && r == 0){ // axial q
+		this.type = "Axial"
+		this.axis = "Width"
+	}else if(q == 0 && r == 0){ // axial p
+		this.type = "Axial"
+		this.axis = "Length"
+	}else if(p == 0){ // Tangential q+r
+		this.type = "Tangential"
+		this.axis = "Width + Height"
+	}else if(q == 0){ // Tangential p+r
+		this.type = "Tangential"
+		this.axis = "Length + Height"
+	}else if(r == 0){ // Tangential p+q
+		this.type = "Tangential"
+		this.axis = "Length + Width"
+	}else{ // Oblique
+		this.type = "Oblique"
+		this.axis = "Length + Width + Height"
 	}
 }
