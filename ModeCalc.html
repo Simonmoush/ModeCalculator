@@ -85,10 +85,10 @@
 		function display(order){
 			var mode_table_contents = ""
 			if(order == "Type"){
-				mode_table_contents += "<tr> <th colspan=3>Axial</th> <th colspan=3>Tangential</th> <th colspan=3>Oblique</th> </tr>"
+				mode_table_contents += "<tr> <th colspan=2>Axial</th> <th colspan=2>Tangential</th> <th colspan=2>Oblique</th> </tr>"
 
 				mode_table_contents += "<tr>"
-				for(var i = 0; i < 3; i++) {mode_table_contents += "<th>Frequency</th> <th>Type</th> <th>Axis</th>"}
+				for(var i = 0; i < 3; i++) {mode_table_contents += "<th>Frequency</th> <th>Axis</th>"}
 				mode_table_contents += "</tr>"
 
 				var axial_modes = mode_list.filter(isAxial)
@@ -99,30 +99,24 @@
 					mode_table_contents += "<tr>"
 					if(m < axial_modes.length){
 						mode_table_contents += " <td>" + axial_modes[m].freq + "</td> "
-						mode_table_contents += " <td>" + axial_modes[m].type + "</td> "
 						mode_table_contents += " <td>" + axial_modes[m].axis + "</td> "
 					}else{
-						mode_table_contents += " <td></td> "
 						mode_table_contents += " <td></td> "
 						mode_table_contents += " <td></td> "
 					}
 
 					if(m < tangential_modes.length){
 						mode_table_contents += " <td>" + tangential_modes[m].freq + "</td> "
-						mode_table_contents += " <td>" + tangential_modes[m].type + "</td> "
 						mode_table_contents += " <td>" + tangential_modes[m].axis + "</td> "
 					}else{
-						mode_table_contents += " <td></td> "
 						mode_table_contents += " <td></td> "
 						mode_table_contents += " <td></td> "
 					}
 
 					if(m < oblique_modes.length){
 						mode_table_contents += " <td>" + oblique_modes[m].freq + "</td> "
-						mode_table_contents += " <td>" + oblique_modes[m].type + "</td> "
 						mode_table_contents += " <td>" + oblique_modes[m].axis + "</td> "
 					}else{
-						mode_table_contents += " <td></td> "
 						mode_table_contents += " <td></td> "
 						mode_table_contents += " <td></td> "
 					}
@@ -211,6 +205,12 @@
 		<button type="button" onclick="display('Freq')">Frequency</button>
 		<button type="button" onclick="display('Type')">Type</button>
 	</div>
+	
+	<style>
+		#Mode_List td{
+			margin: 10px
+		}
+	</style>
 
 	<table id="Mode_List"></table>
 
