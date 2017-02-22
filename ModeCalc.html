@@ -18,11 +18,11 @@
 			q = width mode number
 			r = height mode number
 
-			Using the following approximation for the Shroeder frequency:
+			Using the following approximation for the Schroeder frequency:
 			S = 3c/d
 			
 			where:
-			S = Shroeder frequency
+			S = Schroeder frequency
 			c = speed of sound
 			d = the smallest representive dimension of the room
 		*/
@@ -51,7 +51,19 @@
 			}
 
 			var speed_of_sound = 340.29 // meters per sec
-			var shroeder_freq = 3*speed_of_sound/Math.min(length, width, height)
+			var schroeder_freq = 3*speed_of_sound/Math.min(length, width, height)
+			document.getElementById("Schroeder").innerHTML = Math.round(schroeder_freq*100)/100
+			var frequency_limit = document.getElementById("FreqLimit").value
+			if(frequency_limit == 0){
+				frequency_limit = schroeder_freq
+			}
+			
+			if(frequency_limit > 2500 & isFinite(frequency_limit)){
+				if(!confirm("The frequency limit (either manually set or set to the Schroeder frequency by default) is very high (above 2500Hz). The requested calculation may take a few seconds. Would you like to continue?")){
+					return
+				}
+			}
+
 			mode_list = [];
 			var mode_freq = 0
 
@@ -67,19 +79,19 @@
 						mode_freq = (speed_of_sound/2) * Math.sqrt(Math.pow(p/length, 2) + Math.pow(q/width, 2) + Math.pow(r/height, 2))
 
 						// add mode to list of modes
-						if(mode_freq < shroeder_freq){
+						if(mode_freq < frequency_limit){
 							if(mode_freq != 0){
 								mode_list.push(new Mode(Math.round(mode_freq*100)/100, p, q, r))
 							}
 							r++ // check the next mode
 						} else{
-							// higher r for the current p and q will produce modes above the shroeder frequency
+							// higher r for the current p and q will produce modes above the schroeder frequency
 							// so we need to move to the next q
 							break
 						}
 					}
 					if(r == 0) {
-						// if no modes were found, then  higher q for any p and r will produce modes above the shroeder frequency
+						// if no modes were found, then  higher q for any p and r will produce modes above the schroeder frequency
 						// so wee need to move to the next p
 						p++
 						break
@@ -88,18 +100,22 @@
 					}
 				}
 				if(q == 0 && r == 0){
-					// if no modes were found, then higher p for any q and r will produce modes above the shroeder frequency
+					// if no modes were found, then higher p for any q and r will produce modes above the schroeder frequency
 					// so we're done
 					break
 				}
 			}
 			mode_list = mode_list.sort(compareFreq)
-			display("Freq")
+			if(document.getElementById("FreqSort").checked){
+				display("Freq")
+			}else{
+				display("Type")
+			}
 		}
 
 		function display(order){
 			if(mode_list.length == 0){
-				document.getElementById("Mode_List").innerHTML = "<p id='disclamer'>There was an error computing. Check that all dimensions are non-zero</p>"
+				document.getElementById("Mode_List").innerHTML = "<p id='disclamer'>Cannot display. Check that all dimensions are non-zero, and that you have clicked 'Compute Modes'</p>"
 				return
 			}
 			var mode_table_contents = ""
@@ -109,9 +125,9 @@
 
 				// give each section their sub-headers
 				mode_table_contents += "<tr>"
-				mode_table_contents += "<th>Frequency</th> <th>Axis</th>"
-				mode_table_contents += "<th class='left_border'>Frequency</th> <th>Axis</th>"
-				mode_table_contents += "<th class='left_border'>Frequency</th>"
+				mode_table_contents += "<th>Frequency (Hz)</th> <th>Axis</th>"
+				mode_table_contents += "<th class='left_border'>Frequency (Hz)</th> <th>Axis</th>"
+				mode_table_contents += "<th class='left_border'>Frequency (Hz)</th>"
 				mode_table_contents += "</tr>"
 
 				// get a list of modes of each type
@@ -148,7 +164,7 @@
 				}
 
 			}else if(order == "Freq"){
-				mode_table_contents += "<tr> <th>Frequency</th> <th>Type</th> <th>Axis</th> </tr>"
+				mode_table_contents += "<tr> <th>Frequency (Hz)</th> <th>Type</th> <th>Axis</th> </tr>"
 				for (var m = 0; m < mode_list.length; m++){
 					current_mode = mode_list[m]
 					mode_table_contents += "<tr>"
@@ -253,6 +269,13 @@
 		.inches {
 			display: none;
 		}
+		#Schroeder {
+			padding-left: 1em;
+		}
+		#compute {
+			padding: 5px;
+			margin: 15px;
+		}
 	</style>
 </head>
 <body>
@@ -281,16 +304,26 @@
 					<label for="meters">Meters</label>
 			</td>
 			<td>
-				<input name="Units", id="feet", valuk="feet", type="radio", onclick="showInches()">
+				<input name="Units", id="feet", value="feet", type="radio", onclick="showInches()">
 					<label for="feet">Feet and Inches</label>
 			</td>
 		</tr>
+		<tr>
+			<td>Frequency Limit:</td>
+			<td><input name="limit", id="FreqLimit", value="0", type="text"</input></td>
+			<td>(0 means use the Schroeder frequency)</td>
+		</tr>
 	</table>
-	<button type="button" onclick="compute()">Compute Modes</button>
+	<div>
+		<button id="compute", type="button" onclick="compute()">Compute Modes</button>
+	</div>
+	<div>
+		<span>Approximate Schroeder Frequency (Hz):</span><span id="Schroeder"</span>
+	</div>
 	<div id="Sorting">
 		<span>Sorting:</span>
-		<button type="button" onclick="display('Freq')">Frequency</button>
-		<button type="button" onclick="display('Type')">Type</button>
+		<input name="sort", type="radio", id="FreqSort", value="Freq", onclick="display('Freq')", checked="checked">Frequency</button>
+		<input name="sort", type="radio", id="TypeSort", value="Type", onclick="display('Type')">Type</button>
 	</div>
 	
 	<table id="Mode_List"></table>
