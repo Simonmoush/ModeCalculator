@@ -35,6 +35,15 @@
 			var length = document.getElementById("RoomLength").value
 			var width = document.getElementById("RoomWidth").value
 			var height = document.getElementById("RoomHeight").value
+
+			var metric = document.getElementById("meters").checked
+			if(!metric){
+				// convert the units to metric units
+				length *= .305
+				width *= .305
+				height *= .305
+			}
+
 			var speed_of_sound = 340.29 // meters per sec
 			var shroeder_freq = 3*speed_of_sound/Math.min(length, width, height)
 			mode_list = [];
@@ -85,16 +94,22 @@
 		function display(order){
 			var mode_table_contents = ""
 			if(order == "Type"){
-				mode_table_contents += "<tr> <th colspan=2>Axial</th> <th colspan=2>Tangential</th> <th colspan=2>Oblique</th> </tr>"
+				// make the three big sections of mode type
+				mode_table_contents += "<tr> <th colspan=2>Axial</th> <th colspan=2 class='left_border'>Tangential</th> <th class='left_border'>Oblique</th> </tr>"
 
+				// give each section their sub-headers
 				mode_table_contents += "<tr>"
-				for(var i = 0; i < 3; i++) {mode_table_contents += "<th>Frequency</th> <th>Axis</th>"}
+				mode_table_contents += "<th>Frequency</th> <th>Axis</th>"
+				mode_table_contents += "<th class='left_border'>Frequency</th> <th>Axis</th>"
+				mode_table_contents += "<th class='left_border'>Frequency</th>"
 				mode_table_contents += "</tr>"
 
+				// get a list of modes of each type
 				var axial_modes = mode_list.filter(isAxial)
 				var tangential_modes = mode_list.filter(isTangential)
 				var oblique_modes = mode_list.filter(isOblique)
 
+				//list the modes
 				for (var m = 0; m < Math.max(axial_modes.length, tangential_modes.length, oblique_modes.length); m++){
 					mode_table_contents += "<tr>"
 					if(m < axial_modes.length){
@@ -106,19 +121,17 @@
 					}
 
 					if(m < tangential_modes.length){
-						mode_table_contents += " <td>" + tangential_modes[m].freq + "</td> "
+						mode_table_contents += " <td class='left_border'>" + tangential_modes[m].freq + "</td> "
 						mode_table_contents += " <td>" + tangential_modes[m].axis + "</td> "
 					}else{
-						mode_table_contents += " <td></td> "
+						mode_table_contents += " <td class='left_border'></td> "
 						mode_table_contents += " <td></td> "
 					}
 
 					if(m < oblique_modes.length){
-						mode_table_contents += " <td>" + oblique_modes[m].freq + "</td> "
-						mode_table_contents += " <td>" + oblique_modes[m].axis + "</td> "
+						mode_table_contents += " <td class='left_border'>" + oblique_modes[m].freq + "</td> "
 					}else{
-						mode_table_contents += " <td></td> "
-						mode_table_contents += " <td></td> "
+						mode_table_contents += " <td class='left_border'></td> "
 					}
 
 					mode_table_contents += "</tr>\n"
@@ -188,27 +201,50 @@
 	<table id="Inputs">
 		<tr>
 			<td>Room Length:</td>
-			<td><input name="RoomLength", id="RoomLength", value="10", type="text"</td>
+			<td><input name="RoomLength", id="RoomLength", value="10", type="text"></td>
 		</tr>
 		<tr>
 			<td>Room Width:</td>
-			<td><input name="RoomWidth", id="RoomWidth", value="9", type="text"</td>
+			<td><input name="RoomWidth", id="RoomWidth", value="9", type="text"></td>
 		</tr>
 		<tr>
 			<td>Room Height:</td>
-			<td><input name="RoomHeight", id="RoomHeight", value="8", type="text"</td>
+			<td><input name="RoomHeight", id="RoomHeight", value="8", type="text"></td>
+		</tr>
+		<tr>
+			<td>Units:</td>
+			<td>
+				<input name="Units", id="meters", value="meters", type="radio">
+					<label for="meters">Meters</label>
+				<input name="Units", id="feet", valuk="feet", type="radio">
+					<label for="feet">Feet</label>
+			</td>
 		</tr>
 	</table>
 	<button type="button" onclick="compute()">Compute Modes</button>
 	<div id="Sorting">
-		<h2>Sorting:</h2>
+		<span>Sorting:</span>
 		<button type="button" onclick="display('Freq')">Frequency</button>
 		<button type="button" onclick="display('Type')">Type</button>
 	</div>
 	
 	<style>
-		#Mode_List td{
-			padding: 10px
+		#Mode_List {
+			border: 2px solid black;
+			border-collapse: collapse;
+		}
+		#Mode_List td {
+			padding-left: 15px;
+			padding-right: 15px;
+			border: 1px solid black;
+		}
+		#Mode_List th {
+			border: 1px solid black;
+			padding-left: 15px;
+			padding-right: 15px;
+		}
+		#Mode_List .left_border{
+			border-left: 2px solid black;
 		}
 	</style>
 
