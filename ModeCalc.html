@@ -38,9 +38,16 @@
 			var metric = document.getElementById("meters").checked
 			if(!metric){
 				// convert the units to metric units
-				length *= .305
-				width *= .305
-				height *= .305
+
+				// change feet to meters
+				length *= .3048
+				width *= .3048
+				height *= .3048
+
+				// change inches to meters and add them
+				length += (document.getElementById("LengthInches").value/12) * .3048
+				width += (document.getElementById("WidthInches").value/12) * .3048
+				height += (document.getElementById("HeightInches").value/12) * .3048
 			}
 
 			var speed_of_sound = 340.29 // meters per sec
@@ -91,6 +98,10 @@
 		}
 
 		function display(order){
+			if(mode_list.length == 0){
+				document.getElementById("Mode_List").innerHTML = "<p id='disclamer'>There was an error computing. Check that all dimensions are non-zero</p>"
+				return
+			}
 			var mode_table_contents = ""
 			if(order == "Type"){
 				// make the three big sections of mode type
@@ -194,42 +205,20 @@
 				this.axis = "Length + Width + Height"
 			}
 		}
+		function showInches(){
+			var inchesBoxes = document.getElementsByClassName("inches")
+			for(var i = 0; i < inchesBoxes.length; i++){
+				inchesBoxes[i].style.display = "table-cell"
+			}
+		}
+		function hideInches(){
+			var inchesBoxes = document.getElementsByClassName("inches")
+			for(var i = 0; i < inchesBoxes.length; i++){
+				inchesBoxes[i].style.display = "none"
+			}
+		}
 	</script>
 	<title>SIA Acoustics Mode Calculator</title>
-</head>
-<body>
-	<h1 id="title">SIA Acoustics Room Mode Calculator</h1>
-	<p id="author">Simon Moushabeck - 02/22/17</p>
-	<table id="Inputs">
-		<tr>
-			<td>Room Length:</td>
-			<td><input name="RoomLength", id="RoomLength", value="10", type="text"></td>
-		</tr>
-		<tr>
-			<td>Room Width:</td>
-			<td><input name="RoomWidth", id="RoomWidth", value="9", type="text"></td>
-		</tr>
-		<tr>
-			<td>Room Height:</td>
-			<td><input name="RoomHeight", id="RoomHeight", value="8", type="text"></td>
-		</tr>
-		<tr>
-			<td>Units:</td>
-			<td>
-				<input name="Units", id="meters", value="meters", type="radio">
-					<label for="meters">Meters</label>
-				<input name="Units", id="feet", valuk="feet", type="radio">
-					<label for="feet">Feet</label>
-			</td>
-		</tr>
-	</table>
-	<button type="button" onclick="compute()">Compute Modes</button>
-	<div id="Sorting">
-		<span>Sorting:</span>
-		<button type="button" onclick="display('Freq')">Frequency</button>
-		<button type="button" onclick="display('Type')">Type</button>
-	</div>
-	
 	<style>
 		#Mode_List {
 			border: 2px solid black;
@@ -257,8 +246,53 @@
 		body {
 			font-family: "courier", sans;
 		}
+		#disclamer {
+			font-size: 80%;
+			padding: 10px;
+		}
+		.inches {
+			display: none;
+		}
 	</style>
-
+</head>
+<body>
+	<h1 id="title">SIA Acoustics Room Mode Calculator</h1>
+	<p id="author">Simon Moushabeck - 02/22/17</p>
+	<table id="Inputs">
+		<tr>
+			<td>Room Length:</td>
+			<td><input name="RoomLength", id="RoomLength", value="10", type="text"></td>
+			<td class="inches"><input name="LengthInches", id="LengthInches", value="0", type="text"></td>
+		</tr>
+		<tr>
+			<td>Room Width:</td>
+			<td><input name="RoomWidth", id="RoomWidth", value="9", type="text"></td>
+			<td class="inches"><input name="WidthInches", id="WidthInches", value="0", type="text"></td>
+		</tr>
+		<tr>
+			<td>Room Height:</td>
+			<td><input name="RoomHeight", id="RoomHeight", value="8", type="text"></td>
+			<td class="inches"><input name="HeightInches", id="HeightInches", value="0", type="text"></td>
+		</tr>
+		<tr>
+			<td>Units:</td>
+			<td>
+				<input name="Units", id="meters", value="meters", type="radio", checked="checked", onclick="hideInches()">
+					<label for="meters">Meters</label>
+			</td>
+			<td>
+				<input name="Units", id="feet", valuk="feet", type="radio", onclick="showInches()">
+					<label for="feet">Feet and Inches</label>
+			</td>
+		</tr>
+	</table>
+	<button type="button" onclick="compute()">Compute Modes</button>
+	<div id="Sorting">
+		<span>Sorting:</span>
+		<button type="button" onclick="display('Freq')">Frequency</button>
+		<button type="button" onclick="display('Type')">Type</button>
+	</div>
+	
 	<table id="Mode_List"></table>
 
 </body>
