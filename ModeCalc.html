@@ -54,7 +54,7 @@
 						// add mode to list of modes
 						if(mode_freq < shroeder_freq){
 							if(mode_freq != 0){
-								mode_list.push(new Mode(mode_freq, p, q, r))
+								mode_list.push(new Mode(Math.round(mode_freq*100)/100, p, q, r))
 							}
 							r++ // check the next mode
 						} else{
@@ -208,7 +208,7 @@
 	
 	<style>
 		#Mode_List td{
-			margin: 10px
+			padding: 10px
 		}
 	</style>
 
