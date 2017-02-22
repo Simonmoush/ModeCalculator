@@ -31,7 +31,6 @@
 
 		function compute(){
 
-			//TODO fix the data here to take imperial units too
 			var length = document.getElementById("RoomLength").value
 			var width = document.getElementById("RoomWidth").value
 			var height = document.getElementById("RoomHeight").value
@@ -196,8 +195,11 @@
 			}
 		}
 	</script>
+	<title>SIA Acoustics Mode Calculator</title>
 </head>
 <body>
+	<h1 id="title">SIA Acoustics Room Mode Calculator</h1>
+	<p id="author">Simon Moushabeck - 02/22/17</p>
 	<table id="Inputs">
 		<tr>
 			<td>Room Length:</td>
@@ -245,6 +247,15 @@
 		}
 		#Mode_List .left_border{
 			border-left: 2px solid black;
+		}
+		#title {
+			text-align: center;
+		}
+		#author {
+			text-align: center;
+		}
+		body {
+			font-family: "courier", sans;
 		}
 	</style>
 
