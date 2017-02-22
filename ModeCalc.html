@@ -56,6 +56,8 @@
 			var frequency_limit = document.getElementById("FreqLimit").value
 			if(frequency_limit == 0){
 				frequency_limit = schroeder_freq
+			}else{
+				frequency_limit = Math.min(frequency_limit, schroeder_freq)
 			}
 			
 			if(frequency_limit > 2500 & isFinite(frequency_limit)){
